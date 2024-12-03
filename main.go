@@ -26,7 +26,8 @@ func main() {
 
 	v1 := app.Group("/api/v1")
 
-	v1.Post("/users", userHandler.SignUpUser)
+	v1.Post("/user", userHandler.SignUpUser)
+	v1.Post("/user/login", userHandler.LoginUser)
 
 	log.Fatal(app.Listen(":8181"))
 }

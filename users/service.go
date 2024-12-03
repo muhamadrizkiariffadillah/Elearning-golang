@@ -1,6 +1,8 @@
 package users
 
 import (
+	"e-learning/helper"
+	"errors"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -8,6 +10,7 @@ import (
 
 type Service interface {
 	CreateUser(input RegisterUserInput) (Users, error)
+	LoginUser(input LoginUserInput) (Users, error)
 }
 
 type service struct {
@@ -43,4 +46,37 @@ func (s *service) CreateUser(input RegisterUserInput) (Users, error) {
 	}
 
 	return newUser, nil
+}
+
+func (s *service) LoginUser(input LoginUserInput) (Users, error) {
+	var user Users
+	var err error
+
+	inputEmailOrUsername := input.Identifier
+	inputPassword := input.Password
+
+	isEmail := helper.IsEmail(inputEmailOrUsername)
+
+	if isEmail {
+		user, err = s.repository.FindByEmail(inputEmailOrUsername)
+		if err != nil {
+			return Users{}, err
+		}
+	} else {
+		user, err = s.repository.FindByUsername(inputEmailOrUsername)
+		if err != nil {
+			return Users{}, err
+		}
+	}
+
+	if user.Id == 0 {
+		return Users{}, errors.New("user not found")
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.HashPassword), []byte(inputPassword))
+	if err != nil {
+		return Users{}, errors.New("password is invalid")
+	}
+
+	return user, nil
 }
