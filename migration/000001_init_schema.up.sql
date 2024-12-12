@@ -1,8 +1,8 @@
 CREATE TABLE "users" (
   "id" bigserial PRIMARY KEY,
   "full_name" varchar,
-  "username" varchar UNIQUE,
-  "email" varchar UNIQUE,
+  "username" varchar,
+  "email" varchar,
   "hash_password" varchar,
   "role" varchar,
   "created_at" timestamp,
@@ -21,7 +21,7 @@ CREATE TABLE "courses" (
   "updated_at" timestamp
 );
 
-CREATE TABLE "sub_course" (
+CREATE TABLE "sub_courses" (
   "id" bigserial PRIMARY KEY,
   "course_id" int,
   "metadata_url" varchar,
@@ -30,7 +30,7 @@ CREATE TABLE "sub_course" (
   "updated_at" timestamp
 );
 
-CREATE TABLE "membership_price" (
+CREATE TABLE "membership_prices" (
   "id" bigserial PRIMARY KEY,
   "duration" int,
   "benefits" text,
@@ -41,7 +41,7 @@ CREATE TABLE "membership_price" (
   "updated_at" timestamp
 );
 
-CREATE TABLE "membership" (
+CREATE TABLE "memberships" (
   "id" bigserial PRIMARY KEY,
   "user_id" int,
   "start_at" timestamp,
@@ -55,7 +55,7 @@ CREATE TABLE "user_courses" (
   "created_at" timestamp
 );
 
-CREATE TABLE "user_progress" (
+CREATE TABLE "user_progresses" (
   "id" bigserial PRIMARY KEY,
   "user_id" int,
   "course_id" int,
@@ -83,15 +83,15 @@ COMMENT ON COLUMN "users"."role" IS 'default is student';
 
 COMMENT ON COLUMN "courses"."discount_percent" IS '1-100';
 
-COMMENT ON COLUMN "membership_price"."duration" IS '3/6/12';
+COMMENT ON COLUMN "membership_prices"."duration" IS '3/6/12';
 
-COMMENT ON COLUMN "membership_price"."benefits" IS 'a,b,c';
+COMMENT ON COLUMN "membership_prices"."benefits" IS 'a,b,c';
 
-COMMENT ON COLUMN "membership_price"."discount_percent" IS '1-100';
+COMMENT ON COLUMN "membership_prices"."discount_percent" IS '1-100';
 
-COMMENT ON COLUMN "membership"."id" IS 'create when a user signup';
+COMMENT ON COLUMN "memberships"."id" IS 'create when a user signup';
 
-COMMENT ON COLUMN "user_progress"."is_complete" IS 'false';
+COMMENT ON COLUMN "user_progresses"."is_complete" IS 'false';
 
 COMMENT ON COLUMN "transactions"."payment_goal" IS 'membership/course';
 
@@ -99,22 +99,22 @@ COMMENT ON COLUMN "transactions"."code" IS 'CRS-CRSID-USERID/MBR-DURATION-USERID
 
 COMMENT ON COLUMN "transactions"."status" IS 'paid/pending/fail';
 
-ALTER TABLE "sub_course" ADD FOREIGN KEY ("course_id") REFERENCES "courses" ("id");
+ALTER TABLE "sub_courses" ADD FOREIGN KEY ("course_id") REFERENCES "courses" ("id");
 
-ALTER TABLE "membership" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "memberships" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
 ALTER TABLE "user_courses" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
 ALTER TABLE "user_courses" ADD FOREIGN KEY ("course_id") REFERENCES "courses" ("id");
 
-ALTER TABLE "user_progress" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "user_progresses" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
-ALTER TABLE "user_progress" ADD FOREIGN KEY ("course_id") REFERENCES "courses" ("id");
+ALTER TABLE "user_progresses" ADD FOREIGN KEY ("course_id") REFERENCES "courses" ("id");
 
-ALTER TABLE "user_progress" ADD FOREIGN KEY ("sub_course_id") REFERENCES "sub_course" ("id");
+ALTER TABLE "user_progresses" ADD FOREIGN KEY ("sub_course_id") REFERENCES "sub_courses" ("id");
 
 ALTER TABLE "transactions" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
 ALTER TABLE "transactions" ADD FOREIGN KEY ("course_id") REFERENCES "courses" ("id");
 
-ALTER TABLE "transactions" ADD FOREIGN KEY ("membership_id") REFERENCES "membership" ("id");
+ALTER TABLE "transactions" ADD FOREIGN KEY ("membership_id") REFERENCES "memberships" ("id");

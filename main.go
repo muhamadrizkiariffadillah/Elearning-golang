@@ -1,7 +1,10 @@
 package main
 
 import (
+	"e-learning/auth"
+	"e-learning/courses"
 	"e-learning/handler"
+	"e-learning/membership"
 	"e-learning/users"
 	"log"
 
@@ -17,17 +20,35 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// User domain
+	// repository
 	userRepository := users.Repositories(db)
-	userService := users.Services(userRepository)
-	userHandler := handler.UserHandler(userService)
+	membershipRepositories := membership.Repositories(db)
+	courseRepository := courses.Repositories(db)
 
+	// service
+	userService := users.Services(userRepository)
+	authService := auth.AuthServices([]byte("123qweasdzxczxcasdqwe123123qweasdzxc"))
+	membershipServices := membership.Services(membershipRepositories)
+	courseServices := courses.Services(courseRepository)
+
+	// middleware
+	userMiddleware := auth.UsersMidlleware(authService, userService)
+	adminMiddleware := auth.AdministratorMidlleware(authService, userService)
+
+	// handler
+	userHandler := handler.UserHandler(userService, authService, membershipServices)
+	courseHandler := handler.CourseHandlers(courseServices)
+
+	// membership domain
 	app := fiber.New()
 
 	v1 := app.Group("/api/v1")
 
 	v1.Post("/user", userHandler.SignUpUser)
 	v1.Post("/user/login", userHandler.LoginUser)
+	v1.Put("/user", userMiddleware, userHandler.UpdateUserInfo)
+	v1.Post("/user/password", userMiddleware, userHandler.UpdateUserPassword)
+	v1.Post("/course", adminMiddleware, courseHandler.CreateNewCourse)
 
 	log.Fatal(app.Listen(":8181"))
 }
