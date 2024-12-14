@@ -10,6 +10,7 @@ type Courses struct {
 	Price            int
 	DiscountPercent  uint8
 	FinalPrice       int
+	Slug             string
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 }

@@ -48,7 +48,9 @@ func main() {
 	v1.Post("/user/login", userHandler.LoginUser)
 	v1.Put("/user", userMiddleware, userHandler.UpdateUserInfo)
 	v1.Post("/user/password", userMiddleware, userHandler.UpdateUserPassword)
+
 	v1.Post("/course", adminMiddleware, courseHandler.CreateNewCourse)
+	v1.Put("/course/:id", adminMiddleware, courseHandler.UpdateCourse)
 
 	log.Fatal(app.Listen(":8181"))
 }

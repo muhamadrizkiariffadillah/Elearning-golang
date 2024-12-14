@@ -59,7 +59,8 @@ func (h *userHandler) SignUpUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(response)
 	}
 
-	response := helper.APIResponse(fiber.StatusOK, "success", "successfully to create user", membershipUser)
+	formatter := helper.UserFormatter(newUser.FullName, newUser.Email, newUser.Username, membershipUser.StartAt)
+	response := helper.APIResponse(fiber.StatusOK, "success", "successfully to create user", formatter)
 	return c.Status(fiber.StatusOK).JSON(response)
 }
 

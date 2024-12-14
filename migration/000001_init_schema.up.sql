@@ -17,6 +17,7 @@ CREATE TABLE "courses" (
   "price" int,
   "discount_percent" smallint,
   "final_price" int,
+  "slug" varchar,
   "created_at" timestamp,
   "updated_at" timestamp
 );

@@ -7,3 +7,7 @@ type CreateCourseInput struct {
 	Price            int    `json:"price" validate:"required"`
 	DiscountPrice    uint8  `json:"discount" validate:"required"`
 }
+
+type Param struct {
+	Id int `uri:"id"`
+}
