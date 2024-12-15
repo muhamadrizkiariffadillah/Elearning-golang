@@ -51,6 +51,7 @@ func main() {
 
 	v1.Post("/course", adminMiddleware, courseHandler.CreateNewCourse)
 	v1.Put("/course/:id", adminMiddleware, courseHandler.UpdateCourse)
+	v1.Get("/course/:id", courseHandler.GetCourseById)
 
 	log.Fatal(app.Listen(":8181"))
 }

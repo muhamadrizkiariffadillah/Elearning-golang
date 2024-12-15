@@ -51,7 +51,7 @@ func (h *courseHandler) CreateNewCourse(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(response)
 	}
 
-	formatter := helper.CourseFormatter(newCourse.CourseName, newCourse.CourseImageUrl, newCourse.ShortDescription, newCourse.FinalPrice)
+	formatter := helper.CourseFormatter(newCourse.CourseName, newCourse.CourseImageUrl, newCourse.ShortDescription, newCourse.Price, int(newCourse.DiscountPercent), newCourse.FinalPrice)
 
 	response := helper.APIResponse(fiber.StatusOK, "success", "successfully to create a new course", formatter)
 
@@ -110,7 +110,40 @@ func (h *courseHandler) UpdateCourse(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(response)
 	}
 
-	formatter := helper.CourseFormatter(updatedCourse.CourseName, updatedCourse.CourseImageUrl, updatedCourse.ShortDescription, updatedCourse.FinalPrice)
+	formatter := helper.CourseFormatter(updatedCourse.CourseName, updatedCourse.CourseImageUrl, updatedCourse.ShortDescription, updatedCourse.Price, int(updatedCourse.DiscountPercent), updatedCourse.FinalPrice)
+
+	response := helper.APIResponse(fiber.StatusOK, "success", "success to update the course", formatter)
+
+	return c.Status(fiber.StatusOK).JSON(response)
+}
+
+func (h *courseHandler) GetCourseById(c *fiber.Ctx) error {
+
+	var input courses.Param
+
+	err := c.ParamsParser(&input)
+
+	if err != nil {
+		errorMsg := fiber.Map{
+			"error": err.Error(),
+		}
+
+		response := helper.APIResponse(fiber.StatusBadRequest, "failed", "fail to capture the uri", errorMsg)
+
+		return c.Status(fiber.StatusBadRequest).JSON(response)
+	}
+
+	course, err := h.service.FindCourseById(input.Id)
+
+	if err != nil {
+		errorMsg := fiber.Map{"error": err.Error()}
+
+		response := helper.APIResponse(fiber.StatusInternalServerError, "failed", "fail to get the course", errorMsg)
+
+		return c.Status(fiber.StatusInternalServerError).JSON(response)
+	}
+
+	formatter := helper.CourseFormatter(course.CourseName, course.CourseImageUrl, course.ShortDescription, course.Price, int(course.DiscountPercent), course.FinalPrice)
 
 	response := helper.APIResponse(fiber.StatusOK, "success", "success to update the course", formatter)
 

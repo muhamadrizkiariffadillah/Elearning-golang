@@ -72,15 +72,19 @@ type CourseFormat struct {
 	CourseName       string `json:"course_name"`
 	CourseImageUrl   string `json:"course_img_url"`
 	ShortDescription string `json:"short_description"`
-	FinalPrice       int    `json:"price"`
+	Price            int    `json:"price"`
+	Discount         uint8  `json:"discount"`
+	FinalPrice       int    `json:"final_price"`
 }
 
-func CourseFormatter(name, imageUrl, sd string, fp int) CourseFormat {
+func CourseFormatter(name, imageUrl, sd string, p, d, fp int) CourseFormat {
 
 	formatter := CourseFormat{
 		CourseName:       name,
 		CourseImageUrl:   imageUrl,
 		ShortDescription: sd,
+		Price:            p,
+		Discount:         uint8(d),
 		FinalPrice:       fp,
 	}
 

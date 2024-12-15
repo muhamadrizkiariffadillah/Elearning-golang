@@ -10,6 +10,7 @@ import (
 type Service interface {
 	CreateCourse(input CreateCourseInput) (Courses, error)
 	UpdateCourse(id int, input CreateCourseInput) (Courses, error)
+	FindCourseById(id int) (Courses, error)
 }
 
 type service struct {
@@ -83,4 +84,18 @@ func (s *service) UpdateCourse(id int, input CreateCourseInput) (Courses, error)
 
 	return updatedCourse, nil
 
+}
+
+func (s *service) FindCourseById(id int) (Courses, error) {
+
+	course, err := s.repo.FindById(id)
+
+	if err != nil {
+		return Courses{}, errors.New("error when get the course")
+	}
+
+	if course.Id == 0 {
+		return Courses{}, errors.New("the course is not found")
+	}
+	return course, nil
 }
