@@ -2,6 +2,7 @@ package courses
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/gosimple/slug"
@@ -11,6 +12,8 @@ type Service interface {
 	CreateCourse(input CreateCourseInput) (Courses, error)
 	UpdateCourse(id int, input CreateCourseInput) (Courses, error)
 	FindCourseById(id int) (Courses, error)
+	CreateSubCourse(id int, input CreateSubCourseInput) (SubCourses, error)
+	UpdateSubCourse(params UpdateSubParams, input CreateSubCourseInput) (SubCourses, error)
 }
 
 type service struct {
@@ -98,4 +101,66 @@ func (s *service) FindCourseById(id int) (Courses, error) {
 		return Courses{}, errors.New("the course is not found")
 	}
 	return course, nil
+}
+
+func (s *service) CreateSubCourse(id int, input CreateSubCourseInput) (SubCourses, error) {
+
+	candidateSubCourse := SubCourses{
+		CourseId:       id,
+		SubCourseTitle: input.SubCourseTitle,
+		MetadataUrl:    input.MetadataUrl,
+		Description:    input.Description,
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
+	}
+
+	newSubCourse, err := s.repo.CreateSub(candidateSubCourse)
+
+	if err != nil {
+		return SubCourses{}, errors.New("service: fail to create a sub course")
+	}
+
+	return newSubCourse, nil
+}
+
+func (s *service) UpdateSubCourse(params UpdateSubParams, input CreateSubCourseInput) (SubCourses, error) {
+
+	course, err := s.repo.FindById(params.CourseId)
+
+	fmt.Println(course.Id)
+
+	if err != nil {
+		return SubCourses{}, errors.New("error to find course id")
+	}
+
+	if course.Id == 0 {
+		return SubCourses{}, errors.New("course is not found")
+	}
+
+	subCourse, err := s.repo.FindSubById(params.SubCourseId)
+
+	if err != nil {
+		return SubCourses{}, errors.New("subcourse is not found")
+	}
+
+	if subCourse.Id == 0 {
+		return SubCourses{}, errors.New("subcourse is not found")
+	}
+
+	if course.Id != subCourse.CourseId {
+		return SubCourses{}, errors.New("course id is not same")
+	}
+
+	subCourse.SubCourseTitle = input.SubCourseTitle
+	subCourse.MetadataUrl = input.MetadataUrl
+	subCourse.Description = input.Description
+	subCourse.UpdatedAt = time.Now()
+
+	updatedSubCourse, err := s.repo.UpdateSub(subCourse)
+
+	if err != nil {
+		return SubCourses{}, errors.New("error when update subcourse in service")
+	}
+
+	return updatedSubCourse, nil
 }

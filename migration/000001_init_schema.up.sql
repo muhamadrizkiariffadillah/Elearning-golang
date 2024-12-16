@@ -25,6 +25,7 @@ CREATE TABLE "courses" (
 CREATE TABLE "sub_courses" (
   "id" bigserial PRIMARY KEY,
   "course_id" int,
+  "sub_course_title" varchar,
   "metadata_url" varchar,
   "description" text,
   "created_at" timestamp,

@@ -14,3 +14,13 @@ type Courses struct {
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 }
+
+type SubCourses struct {
+	Id             int
+	CourseId       int
+	SubCourseTitle string
+	MetadataUrl    string
+	Description    string
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+}

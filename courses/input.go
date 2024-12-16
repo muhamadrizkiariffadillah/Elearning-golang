@@ -11,3 +11,14 @@ type CreateCourseInput struct {
 type Param struct {
 	Id int `uri:"id"`
 }
+
+type CreateSubCourseInput struct {
+	SubCourseTitle string `json:"title" validate:"required"`
+	MetadataUrl    string `json:"metadata_url" validate:"required"`
+	Description    string `json:"description" validate:"required"`
+}
+
+type UpdateSubParams struct {
+	CourseId    int `uri:"id"`
+	SubCourseId int `uri:"sub_id"`
+}

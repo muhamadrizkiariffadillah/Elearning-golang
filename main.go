@@ -52,6 +52,10 @@ func main() {
 	v1.Post("/course", adminMiddleware, courseHandler.CreateNewCourse)
 	v1.Put("/course/:id", adminMiddleware, courseHandler.UpdateCourse)
 	v1.Get("/course/:id", courseHandler.GetCourseById)
+	v1.Post("/course/:id", adminMiddleware, courseHandler.CreateSubCourseByCourseId)
+	v1.Put("/course/:id/sub-course/:sub_id", adminMiddleware, courseHandler.UpdateSubCourse)
 
+	// `uri:"course_id"`
+	// SubCourseId int `uri:"sub_course_id"`
 	log.Fatal(app.Listen(":8181"))
 }
