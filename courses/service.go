@@ -14,6 +14,7 @@ type Service interface {
 	FindCourseById(id int) (Courses, error)
 	CreateSubCourse(id int, input CreateSubCourseInput) (SubCourses, error)
 	UpdateSubCourse(params UpdateSubParams, input CreateSubCourseInput) (SubCourses, error)
+	GetSubCouse(params UpdateSubParams) (SubCourses, error)
 }
 
 type service struct {
@@ -163,4 +164,33 @@ func (s *service) UpdateSubCourse(params UpdateSubParams, input CreateSubCourseI
 	}
 
 	return updatedSubCourse, nil
+}
+
+func (s *service) GetSubCouse(params UpdateSubParams) (SubCourses, error) {
+
+	course, err := s.repo.FindById(params.CourseId)
+
+	if err != nil {
+		return SubCourses{}, errors.New("error to find course id")
+	}
+
+	if course.Id == 0 {
+		return SubCourses{}, errors.New("course is not found")
+	}
+
+	subCourse, err := s.repo.FindSubById(params.SubCourseId)
+
+	if err != nil {
+		return SubCourses{}, errors.New("subcourse is not found")
+	}
+
+	if subCourse.Id == 0 {
+		return SubCourses{}, errors.New("subcourse is not found")
+	}
+
+	if course.Id != subCourse.CourseId {
+		return SubCourses{}, errors.New("course id is not same")
+	}
+
+	return subCourse, nil
 }

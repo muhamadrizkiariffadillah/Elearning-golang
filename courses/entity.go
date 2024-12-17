@@ -21,6 +21,7 @@ type SubCourses struct {
 	SubCourseTitle string
 	MetadataUrl    string
 	Description    string
+	Slug           string
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }

@@ -290,3 +290,27 @@ func (h *courseHandler) UpdateSubCourse(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(response)
 }
+
+func (h *courseHandler) GetSubCourse(c *fiber.Ctx) error {
+
+	var params courses.UpdateSubParams
+
+	id := c.Params("id")
+	subId := c.Params("sub_id")
+
+	params.CourseId, _ = strconv.Atoi(id)
+	params.SubCourseId, _ = strconv.Atoi(subId)
+
+	subCourse, err := h.service.GetSubCouse(params)
+
+	if err != nil {
+		response := helper.APIResponse(fiber.StatusInternalServerError, "failed", "fail to capture the params", fiber.Map{"error": err.Error()})
+
+		return c.Status(fiber.StatusInternalServerError).JSON(response)
+	}
+
+	response := helper.APIResponse(fiber.StatusOK, "success", "success to update the sub course.", fiber.Map{"sub_course": subCourse})
+
+	return c.Status(fiber.StatusOK).JSON(response)
+
+}

@@ -28,6 +28,7 @@ CREATE TABLE "sub_courses" (
   "sub_course_title" varchar,
   "metadata_url" varchar,
   "description" text,
+  "slug" varchar,
   "created_at" timestamp,
   "updated_at" timestamp
 );
