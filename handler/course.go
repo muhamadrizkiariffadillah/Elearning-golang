@@ -314,3 +314,44 @@ func (h *courseHandler) GetSubCourse(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(response)
 
 }
+
+func (h *courseHandler) GetSubCourses(c *fiber.Ctx) error {
+
+	var input courses.Param
+
+	paramId := c.Params("id")
+
+	input.Id, _ = strconv.Atoi(paramId)
+
+	course, err := h.service.FindCourseById(input.Id)
+
+	if err != nil {
+		errMsg := fiber.Map{
+			"error": err.Error(),
+		}
+
+		response := helper.APIResponse(fiber.StatusInternalServerError, "failed", "fail to load course", errMsg)
+
+		return c.Status(fiber.StatusInternalServerError).JSON(response)
+	}
+
+	subCourse, err := h.service.GetSubCoursesByCourseId(course.Id)
+
+	if err != nil {
+		errMsg := fiber.Map{
+			"error": err.Error(),
+		}
+
+		response := helper.APIResponse(fiber.StatusInternalServerError, "failed", "fail to load course", errMsg)
+
+		return c.Status(fiber.StatusInternalServerError).JSON(response)
+	}
+
+	courseFormatter := helper.CourseFormatter(course.CourseName, course.CourseImageUrl, course.ShortDescription, course.Price, int(course.DiscountPercent), course.FinalPrice)
+
+	SubCoursesFormatter := helper.GetSubCoursesBeforeBuyingFormatter(subCourse)
+
+	response := helper.APIResponse(fiber.StatusOK, "success", "success to get course data", fiber.Map{"course": courseFormatter, "sub_course": SubCoursesFormatter})
+
+	return c.Status(fiber.StatusOK).JSON(response)
+}

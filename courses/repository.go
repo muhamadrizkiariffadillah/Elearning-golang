@@ -13,6 +13,7 @@ type Repository interface {
 	CreateSub(sub SubCourses) (SubCourses, error)
 	UpdateSub(sub SubCourses) (SubCourses, error)
 	FindSubById(id int) (SubCourses, error)
+	FindSubCoursesById(courseId int) ([]SubCourses, error)
 }
 
 type repository struct {
@@ -98,4 +99,17 @@ func (r *repository) FindSubById(id int) (SubCourses, error) {
 	}
 
 	return sub, nil
+}
+
+func (r *repository) FindSubCoursesById(courseId int) ([]SubCourses, error) {
+
+	var subCourses []SubCourses
+
+	err := r.db.Where("course_id = ?", courseId).Find(&subCourses).Error
+
+	if err != nil {
+		return []SubCourses{}, err
+	}
+
+	return subCourses, nil
 }

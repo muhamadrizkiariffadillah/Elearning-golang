@@ -1,6 +1,10 @@
 package users
 
-import "gorm.io/gorm"
+import (
+	"errors"
+
+	"gorm.io/gorm"
+)
 
 type Repository interface {
 	Create(user Users) (Users, error)
@@ -9,6 +13,7 @@ type Repository interface {
 	FindById(id int) (Users, error)
 	UpdateInfo(user Users) (Users, error)
 	UpdatePassword(user Users) (Users, error)
+	CreateUserProgess(progress UserProgesses) (UserProgesses, error)
 }
 
 type repository struct {
@@ -90,4 +95,15 @@ func (r *repository) UpdatePassword(user Users) (Users, error) {
 	}
 
 	return user, nil
+}
+
+func (r *repository) CreateUserProgess(progress UserProgesses) (UserProgesses, error) {
+
+	err := r.db.Create(&progress).Error
+
+	if err != nil {
+		return UserProgesses{}, errors.New("error create a progress")
+	}
+
+	return progress, nil
 }

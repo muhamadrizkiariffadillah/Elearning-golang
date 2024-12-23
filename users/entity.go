@@ -12,3 +12,13 @@ type Users struct {
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
+
+type UserProgesses struct {
+	Id          int
+	UserId      int
+	CourseId    int
+	SubCourseId int
+	IsComplete  bool
+	CreatedAt   time.Time
+	UpdateAt    time.Time
+}

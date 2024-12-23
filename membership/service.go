@@ -1,9 +1,13 @@
 package membership
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type Service interface {
 	CreateMembership(userId int) (Membership, error)
+	UpdateMembership(userId, duration int64) (Membership, error)
 }
 
 type service struct {
@@ -28,4 +32,27 @@ func (s *service) CreateMembership(userId int) (Membership, error) {
 	}
 
 	return newMembership, nil
+}
+
+func (s *service) UpdateMembership(userId, duration int64) (Membership, error) {
+
+	membership, err := s.repo.FindByUserId(int(userId))
+
+	if err != nil {
+		return Membership{}, errors.New("error searching by user id")
+	}
+
+	if membership.Id == 0 {
+		return Membership{}, errors.New("membership is not found")
+	}
+
+	membership.EndAt = time.Now().Add(time.Duration(duration) * time.Hour)
+
+	updatedMembership, err := s.repo.Update(membership)
+
+	if err != nil {
+		return Membership{}, errors.New("error to update membership")
+	}
+
+	return updatedMembership, nil
 }

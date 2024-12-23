@@ -51,14 +51,13 @@ func main() {
 
 	v1.Post("/course", adminMiddleware, courseHandler.CreateNewCourse)
 	v1.Put("/course/:id", adminMiddleware, courseHandler.UpdateCourse)
-	v1.Get("/course/:id", courseHandler.GetCourseById)
+	v1.Get("/course/:id", courseHandler.GetSubCourses)
 	v1.Post("/course/:id", adminMiddleware, courseHandler.CreateSubCourseByCourseId)
 	v1.Put("/course/:id/sub-course/:sub_id", adminMiddleware, courseHandler.UpdateSubCourse)
-	// Should be checked Only Subcription or Has Boutgh the course
+	// Should be checked Only Subcription or Has Boutgh the course and admin
 	// TODO: Should create a middleware for this endpoint
 	v1.Get("/course/:id/sub-course/:sub_id", courseHandler.UpdateSubCourse)
 
-	// `uri:"course_id"`
-	// SubCourseId int `uri:"sub_course_id"`
+	//
 	log.Fatal(app.Listen(":8181"))
 }

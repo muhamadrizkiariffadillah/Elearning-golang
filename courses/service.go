@@ -15,6 +15,7 @@ type Service interface {
 	CreateSubCourse(id int, input CreateSubCourseInput) (SubCourses, error)
 	UpdateSubCourse(params UpdateSubParams, input CreateSubCourseInput) (SubCourses, error)
 	GetSubCouse(params UpdateSubParams) (SubCourses, error)
+	GetSubCoursesByCourseId(id int) ([]SubCourses, error)
 }
 
 type service struct {
@@ -115,6 +116,10 @@ func (s *service) CreateSubCourse(id int, input CreateSubCourseInput) (SubCourse
 		UpdatedAt:      time.Now(),
 	}
 
+	slug := slug.Make(input.SubCourseTitle)
+
+	candidateSubCourse.Slug = slug
+
 	newSubCourse, err := s.repo.CreateSub(candidateSubCourse)
 
 	if err != nil {
@@ -193,4 +198,19 @@ func (s *service) GetSubCouse(params UpdateSubParams) (SubCourses, error) {
 	}
 
 	return subCourse, nil
+}
+
+func (s *service) GetSubCoursesByCourseId(id int) ([]SubCourses, error) {
+
+	subCourses, err := s.repo.FindSubCoursesById(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(subCourses) == 0 {
+		return nil, errors.New("the sub couses are not avalaible")
+	}
+
+	return subCourses, nil
 }

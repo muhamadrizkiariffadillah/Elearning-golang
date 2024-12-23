@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"e-learning/courses"
 	"regexp"
 	"time"
 
@@ -77,17 +78,42 @@ type CourseFormat struct {
 	FinalPrice       int    `json:"final_price"`
 }
 
-func CourseFormatter(name, imageUrl, sd string, p, d, fp int) CourseFormat {
+func CourseFormatter(name, imageUrl, sd string, price, discount, finalPrice int) CourseFormat {
 
 	formatter := CourseFormat{
 		CourseName:       name,
 		CourseImageUrl:   imageUrl,
 		ShortDescription: sd,
-		Price:            p,
-		Discount:         uint8(d),
-		FinalPrice:       fp,
+		Price:            price,
+		Discount:         uint8(discount),
+		FinalPrice:       finalPrice,
 	}
 
 	return formatter
 
+}
+
+type SubCourseFormatForGetCourse struct {
+	SubCourseName string `json:"sub_course_name"`
+}
+
+func GetSubCourseBeforeBuyingFormatter(sub courses.SubCourses) SubCourseFormatForGetCourse {
+	format := SubCourseFormatForGetCourse{
+		SubCourseName: sub.SubCourseTitle,
+	}
+
+	return format
+}
+
+func GetSubCoursesBeforeBuyingFormatter(subs []courses.SubCourses) []SubCourseFormatForGetCourse {
+
+	var format []SubCourseFormatForGetCourse
+
+	for _, value := range subs {
+		format = append(format, SubCourseFormatForGetCourse{
+			SubCourseName: value.SubCourseTitle,
+		})
+	}
+
+	return format
 }

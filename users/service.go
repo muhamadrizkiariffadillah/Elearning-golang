@@ -15,6 +15,7 @@ type Service interface {
 	UpdatePassword(id int, input UpdatePasswordInput) (Users, error)
 	FindUserById(id int) (Users, error)
 	FindUserByUsername(username string) (Users, error)
+	CreateUserProgress(userId, courseId, subCourseId int) (UserProgesses, error)
 }
 
 type service struct {
@@ -209,4 +210,27 @@ func (s *service) FindUserByUsername(username string) (Users, error) {
 	}
 
 	return user, nil
+}
+
+func (s *service) CreateUserProgress(userId, courseId, subCourseId int) (UserProgesses, error) {
+	// Todo: create a solution to solve a problem when save lots of userprogresses.
+	// course 1
+	// 1,3,5,6,10,12
+	progres := UserProgesses{
+		UserId:      userId,
+		CourseId:    courseId,
+		SubCourseId: subCourseId,
+		IsComplete:  false,
+		CreatedAt:   time.Now(),
+		UpdateAt:    time.Now(),
+	}
+
+	userProgress, err := s.repository.CreateUserProgess(progres)
+
+	if err != nil {
+		return UserProgesses{}, errors.New("error service to save the progress")
+	}
+
+	return userProgress, nil
+
 }

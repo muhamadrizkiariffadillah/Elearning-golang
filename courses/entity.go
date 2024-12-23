@@ -13,6 +13,7 @@ type Courses struct {
 	Slug             string
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
+	SubCourse        []SubCourses `gorm:"foreignKey:Id"`
 }
 
 type SubCourses struct {
